@@ -76,7 +76,7 @@ class AmumuAnalyzer : public edm::EDAnalyzer {
       TH1F* DR_Signal_;
       TFile* out_;
       std::string outFileName_;
-      edm::InputTag genParticleTag_;
+      edm::EDGetTokenT<reco::GenParticleCollection> genParticleTag_;
       std::map<std::string, TH1D*> histos1D_;
       std::map<std::string, TH2D*> histos2D_;
 
@@ -105,7 +105,7 @@ class AmumuAnalyzer : public edm::EDAnalyzer {
 AmumuAnalyzer::AmumuAnalyzer(const edm::ParameterSet& iConfig):
  outFileName_(iConfig.getParameter<std::string>("outFileName")),
  //jetOutputFileName_(iConfig.getParameter<std::string>("jetOutputFileName")),
- genParticleTag_(iConfig.getParameter<edm::InputTag>("genParticleTag")),
+ genParticleTag_(consumes<reco::GenParticleCollection>(iConfig.getParameter<edm::InputTag>("genParticleTag"))),
  histos1D_(),
  histos2D_()
 {
@@ -123,7 +123,7 @@ void AmumuAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
 {
   //now do what ever initialization is needed
   edm::Handle<reco::GenParticleCollection> pGenParticles;
-  iEvent.getByLabel(genParticleTag_, pGenParticles);
+  iEvent.getByToken(genParticleTag_, pGenParticles);
   bool tau_mu=false;
   for(reco::GenParticleCollection::const_iterator iGenParticle = pGenParticles->begin(); iGenParticle != pGenParticles->end(); ++iGenParticle)
   {
