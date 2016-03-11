@@ -63,7 +63,7 @@ class DrellYanAnalyzer : public edm::EDAnalyzer {
       virtual void beginJob() override;
       virtual void analyze(const edm::Event&, const edm::EventSetup&) override;
       virtual void endJob() override;
-      edm::InputTag genParticleTag_;
+      edm::EDGetTokenT<reco::GenParticleCollection> genParticleTag_;
       std::map<std::string, TH1D*> histos1D_;
       TH1F* DR_DrellYan_;
       TFile* out_;
@@ -92,7 +92,7 @@ class DrellYanAnalyzer : public edm::EDAnalyzer {
 //
 DrellYanAnalyzer::DrellYanAnalyzer(const edm::ParameterSet& iConfig):
  //jetOutputFileName_(iConfig.getParameter<std::string>("jetOutputFileName")),
-genParticleTag_(iConfig.getParameter<edm::InputTag>("genParticleTag")),
+genParticleTag_(consumes<reco::GenParticleCollection >(iConfig.getParameter<edm::InputTag>("genParticleTag"))),
  histos1D_(),
 outFileName_(iConfig.getParameter<std::string>("outFileName"))
 {
@@ -108,7 +108,7 @@ void DrellYanAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& 
 {
   //now do what ever initialization is needed
   edm::Handle<reco::GenParticleCollection> pGenParticles;
-  iEvent.getByLabel(genParticleTag_, pGenParticles);
+  iEvent.getByToken(genParticleTag_, pGenParticles);
   for(reco::GenParticleCollection::const_iterator iGenParticle = pGenParticles->begin(); iGenParticle != pGenParticles->end(); ++iGenParticle){
     if(fabs((*iGenParticle).pdgId())==13)
     {
